@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Getting Started with ChatGPT at Clariti</title>
+  <meta name="description" content="A quick, interactive primer for using ChatGPT at Clariti — principles, use cases, do/don'ts, and a prompt builder." />
+  <style>
+    :root{
+      --bg: #0c0f14;
+      --card: #121722;
+      --muted: #8a97ad;
+      --text: #e6edf6;
+      --brand: #6ee7ff;
+      --brand-2: #9b8cff;
+      --ok: #38d39f;
+      --warn: #ffcc66;
+      --danger: #ff7a7a;
+      --border: #1e2533;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --radius-sm: 12px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f7f9fc; --card:#ffffff; --muted:#5a6b85; --text:#0b1220; --border:#e6eaf2; --shadow: 0 8px 24px rgba(15,23,42,.08);
+      }
+    }
+    html,body{height:100%;}
+    body{
+      margin:0; background: radial-gradient(1200px 600px at 10% -10%, rgba(110,231,255,.12), transparent 40%),
+      radial-gradient(1000px 500px at 120% 10%, rgba(155,140,255,.12), transparent 40%), var(--bg);
+      color:var(--text); font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:24px;}
+
+    /* Header */
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:8px 0 24px;}
+    .brand{display:flex; align-items:center; gap:12px;}
+    .logo{width:36px; height:36px; border-radius:10px; background:
+      radial-gradient(60% 60% at 30% 30%, var(--brand), transparent 70%),
+      radial-gradient(60% 60% at 70% 70%, var(--brand-2), transparent 60%),
+      linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,0));
+      border:1px solid var(--border); box-shadow: var(--shadow);
+    }
+    .title{font-weight:700; letter-spacing:.2px;}
+    .actions{display:flex; gap:10px; flex-wrap:wrap;}
+    .btn{appearance:none; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)); color:var(--text); padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; transition: transform .06s ease, background .2s ease, border-color .2s ease; box-shadow: var(--shadow);} 
+    .btn:hover{transform: translateY(-1px);} 
+    .btn.primary{background: linear-gradient(135deg, rgba(110,231,255,.2), rgba(155,140,255,.2)); border-color: rgba(110,231,255,.35);} 
+
+    /* Hero */
+    .hero{display:grid; grid-template-columns: 1.2fr .8fr; gap:22px; align-items:stretch;}
+    @media (max-width: 900px){.hero{grid-template-columns:1fr;}}
+    .card{background:var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);} 
+    .card.pad{padding:22px;}
+    .hero h1{margin:.1rem 0 6px; font-size: clamp(26px, 4vw, 38px);}
+    .lede{color:var(--muted); margin: 0 0 16px;}
+    .badges{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0;}
+    .badge{font-size:12px; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:var(--muted); background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));}
+    .stat{display:flex; align-items:center; gap:12px; padding:14px 16px; border-top:1px solid var(--border);} 
+    .stat strong{font-size:20px;}
+
+    /* Sections */
+    section{margin:28px 0;}
+    section h2{margin:0 0 12px; font-size: clamp(20px, 2.5vw, 24px);} 
+    .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:16px;}
+    .col-4{grid-column: span 4;} .col-6{grid-column: span 6;} .col-8{grid-column: span 8;} .col-12{grid-column: span 12;}
+    @media (max-width: 900px){ .col-4,.col-6,.col-8{grid-column: span 12;} }
+
+    .kpi{display:flex; align-items:center; gap:12px;}
+    .kpi .dot{width:10px; height:10px; border-radius:999px; background: var(--ok);} 
+
+    .list{display:grid; gap:8px;}
+    .list li{list-style:none; padding:10px 12px; border:1px dashed var(--border); border-radius:12px;}
+
+    /* Do / Don't */
+    .flex{display:flex; gap:16px; flex-wrap:wrap;}
+    .panel{flex:1 1 300px;}
+    .panel h3{margin-top:0}
+    .ok{border-left:4px solid var(--ok);} .warn{border-left:4px solid var(--warn);} .bad{border-left:4px solid var(--danger);} 
+
+    /* Details/Accordion */
+    details{border:1px solid var(--border); border-radius:12px; background:var(--card);}
+    details + details{margin-top:10px;}
+    summary{cursor:pointer; padding:14px 16px; font-weight:600; display:flex; align-items:center; gap:10px;}
+    summary::marker{display:none;}
+    .chev{transition: transform .2s ease;}
+    details[open] .chev{transform: rotate(90deg);} 
+    .details-body{padding:0 16px 16px; color:var(--muted);} 
+
+    /* Prompt Builder */
+    .builder{display:grid; gap:12px;}
+    .field{display:grid; gap:6px;}
+    label{font-weight:600;}
+    input[type="text"], select, textarea{background:transparent; color:var(--text); border:1px solid var(--border); border-radius:12px; padding:10px 12px; outline:none;}
+    textarea{min-height:110px; resize:vertical;}
+
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+
+    .toast{position:fixed; inset:auto auto 24px 50%; transform: translateX(-50%) translateY(20px); background:var(--card); border:1px solid var(--border); padding:10px 14px; border-radius:12px; opacity:0; pointer-events:none; transition:.25s ease; box-shadow: var(--shadow);} 
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(0);} 
+
+    .footer{display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--muted); padding:16px 0 40px;}
+    .ver{font-variant-numeric:tabular-nums;}
+
+    /* Print */
+    @media print{
+      .btn, .actions, .toast{display:none !important;}
+      body{background:#fff;}
+      .card{box-shadow:none;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="title">Clariti · AI Squad</div>
+          <div class="lede">Internal guide — Getting Started with ChatGPT</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="printBtn" title="Print or Save as PDF">🖨️ Print / PDF</button>
+        <button class="btn primary" id="shareBtn" title="Copy page link for internal share">🔗 Copy Link</button>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="card pad">
+        <h1>Work smarter with ChatGPT</h1>
+        <p class="lede">Empowerment, not replacement. Use AI to reduce busywork, improve clarity, and make room for higher‑value work.</p>
+        <div class="badges">
+          <span class="badge">Human‑in‑the‑loop ✅</span>
+          <span class="badge">Transparent usage 💬</span>
+          <span class="badge">Security‑aware 🔒</span>
+        </div>
+        <div class="stat" role="group" aria-label="Key principles">
+          <div class="kpi"><span class="dot"></span><span>Always review & own the output</span></div>
+        </div>
+      </div>
+      <div class="card pad">
+        <h2 style="margin-top:0">Quick start</h2>
+        <ol class="list" aria-label="Quick start steps">
+          <li>Sign in with the Clariti ChatGPT Teams license (rollout details incoming).</li>
+          <li>Pick one task today to try in ChatGPT (email draft, summary, checklist).</li>
+          <li>Share your learning with your team — we’re building skills together.</li>
+        </ol>
+        <div class="toolbar" style="margin-top:10px">
+          <button class="btn" id="markTriedBtn" aria-pressed="false">☑️ I tried one task</button>
+          <small id="triedNote" class="lede" aria-live="polite"></small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Use Cases & Principles -->
+    <section>
+      <div class="grid">
+        <div class="col-8">
+          <div class="card pad">
+            <h2>Everyday use cases</h2>
+            <details>
+              <summary><span class="chev">▶</span> Content & Communication</summary>
+              <div class="details-body">
+                <ul>
+                  <li>Draft email outlines, meeting recaps, release notes</li>
+                  <li>Rewrite for tone (friendly, formal, concise)</li>
+                  <li>Summarize long docs into bullet points</li>
+                </ul>
+              </div>
+            </details>
+            <details>
+              <summary><span class="chev">▶</span> Data, Organization & Ops</summary>
+              <div class="details-body">
+                <ul>
+                  <li>Create checklists, SOPs, templates and FAQs</li>
+                  <li>Extract key fields from raw text</li>
+                  <li>Draft Jira tickets, test scripts, or acceptance criteria</li>
+                </ul>
+              </div>
+            </details>
+            <details>
+              <summary><span class="chev">▶</span> Brainstorming & Problem Solving</summary>
+              <div class="details-body">
+                <ul>
+                  <li>Generate options when you’re stuck</li>
+                  <li>Draft survey questions or interview guides</li>
+                  <li>Explore risks, mitigations, and trade‑offs</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card pad">
+            <h2>Principles</h2>
+            <ul>
+              <li><strong>Human‑in‑the‑loop:</strong> You own the work; always review outputs.</li>
+              <li><strong>Transparency:</strong> Calling out that you used ChatGPT is encouraged.</li>
+              <li><strong>Experimentation:</strong> Start small, iterate, share what you learn.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Do / Don't -->
+    <section>
+      <div class="grid">
+        <div class="col-6">
+          <div class="card pad panel ok">
+            <h2>Do ✅</h2>
+            <ul>
+              <li>Use it for drafting, summarizing, formatting, and outlining</li>
+              <li>Iterate on prompts; save ones that work</li>
+              <li>Share wins with your team</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card pad panel bad">
+            <h2>Don’t ⛔</h2>
+            <ul>
+              <li>Paste confidential customer or personal data</li>
+              <li>Assume outputs are correct without review</li>
+              <li>Replace your judgment with AI — use it to amplify judgment</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prompt Builder -->
+    <section>
+      <div class="card pad">
+        <h2>Prompt builder</h2>
+        <p class="lede">Assemble a great prompt and copy it with one click. Think role, goal, audience, tone, and constraints.</p>
+        <div class="builder">
+          <div class="grid">
+            <div class="col-4 field">
+              <label for="role">Role of the assistant</label>
+              <select id="role">
+                <option>Customer Success analyst</option>
+                <option>Technical writer</option>
+                <option>Product manager</option>
+                <option>Sales enablement coach</option>
+                <option>Support specialist</option>
+              </select>
+            </div>
+            <div class="col-4 field">
+              <label for="tone">Tone</label>
+              <select id="tone">
+                <option>concise and friendly</option>
+                <option>executive and direct</option>
+                <option>supportive and instructional</option>
+                <option>formal and neutral</option>
+              </select>
+            </div>
+            <div class="col-4 field">
+              <label for="length">Target length</label>
+              <select id="length">
+                <option>150–200 words</option>
+                <option>bulleted list</option>
+                <option>2–3 paragraphs</option>
+                <option>one‑page summary</option>
+              </select>
+            </div>
+            <div class="col-12 field">
+              <label for="objective">Your objective</label>
+              <input type="text" id="objective" placeholder="e.g., Summarize this meeting and draft action items for the CS team" />
+            </div>
+            <div class="col-12 field">
+              <label for="context">Context (paste notes, bullets, or a rough draft)</label>
+              <textarea id="context" placeholder="Paste the relevant notes or rough content here (no sensitive data)"></textarea>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="btn primary" id="genBtn">⚙️ Generate prompt</button>
+            <button class="btn" id="copyBtn" disabled>📋 Copy prompt</button>
+            <button class="btn" id="clearBtn">🧹 Clear</button>
+          </div>
+          <div class="field" style="margin-top:10px;">
+            <label for="output">Generated prompt</label>
+            <textarea id="output" readonly placeholder="Your prompt will appear here…"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resources -->
+    <section>
+      <div class="grid">
+        <div class="col-12">
+          <div class="card pad">
+            <h2>Resources</h2>
+            <ul>
+              <li>AI Squad updates in Metronome — weekly L10 notes & to‑dos</li>
+              <li>Security awareness module (KnowBe4) — coming soon</li>
+              <li>Clariti‑specific use cases & training — in development</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>© Clariti · Internal Use Only</div>
+      <div class="ver">v1.0 · Updated Aug 2025</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const printBtn = $('#printBtn');
+    const shareBtn = $('#shareBtn');
+    const markTriedBtn = $('#markTriedBtn');
+    const triedNote = $('#triedNote');
+    const genBtn = $('#genBtn');
+    const copyBtn = $('#copyBtn');
+    const clearBtn = $('#clearBtn');
+    const output = $('#output');
+    const toast = $('#toast');
+
+    function showToast(msg){
+      toast.textContent = msg; toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 1700);
+    }
+
+    // Print / PDF
+    printBtn?.addEventListener('click', () => window.print());
+
+    // Share link
+    shareBtn?.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(location.href);
+        showToast('Link copied');
+      }catch(e){ showToast('Unable to copy link'); }
+    });
+
+    // Tried one task — persist in localStorage
+    const TRIED_KEY = 'clariti_ai_tried_one_task';
+    function syncTried(){
+      const tried = localStorage.getItem(TRIED_KEY) === '1';
+      markTriedBtn.setAttribute('aria-pressed', tried ? 'true' : 'false');
+      markTriedBtn.textContent = tried ? '✅ Logged — nice work!' : '☑️ I tried one task';
+      triedNote.textContent = tried ? 'Great! Keep experimenting and share a win in your next team sync.' : '';
+    }
+    markTriedBtn?.addEventListener('click', () => {
+      const tried = localStorage.getItem(TRIED_KEY) === '1';
+      localStorage.setItem(TRIED_KEY, tried ? '0' : '1');
+      syncTried();
+    });
+    syncTried();
+
+    // Prompt builder
+    function buildPrompt(){
+      const role = document.getElementById('role').value;
+      const tone = document.getElementById('tone').value;
+      const length = document.getElementById('length').value;
+      const objective = document.getElementById('objective').value.trim();
+      const context = document.getElementById('context').value.trim();
+
+      const lines = [];
+      lines.push(`Act as a ${role}. Write in a ${tone} tone.`);
+      if (objective) lines.push(`Goal: ${objective}.`);
+      lines.push(`Target length: ${length}.`);
+      if (context) lines.push(`Context:\n${context}`);
+      lines.push('Constraints: be accurate, concise, and structured; use markdown where helpful; include action items if applicable; highlight risks or assumptions.');
+      lines.push('Return only the final output.');
+      return lines.join('\n\n');
+    }
+
+    genBtn?.addEventListener('click', () => {
+      const prompt = buildPrompt();
+      output.value = prompt;
+      copyBtn.disabled = !prompt.trim();
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(output.value);
+        showToast('Prompt copied');
+      }catch(e){ showToast('Copy failed'); }
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      document.getElementById('objective').value = '';
+      document.getElementById('context').value = '';
+      output.value = '';
+      copyBtn.disabled = true;
+    });
+  </script>
+</body>
+</html>
