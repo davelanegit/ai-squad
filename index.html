@@ -4,112 +4,162 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Getting Started with ChatGPT at Clariti</title>
-  <meta name="description" content="A quick, interactive primer for using ChatGPT at Clariti — principles, use cases, do/don'ts, and a prompt builder." />
+  <meta name="description" content="Internal Clariti handout: principles, use cases, do/don'ts, and an interactive prompt builder for ChatGPT." />
+
+  <!-- Brand fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&family=Public+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    /* =========================
+       Clariti Design Tokens
+       ========================= */
     :root{
-      --bg: #0c0f14;
-      --card: #121722;
-      --muted: #8a97ad;
-      --text: #e6edf6;
-      --brand: #6ee7ff;
-      --brand-2: #9b8cff;
-      --ok: #38d39f;
-      --warn: #ffcc66;
-      --danger: #ff7a7a;
-      --border: #1e2533;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      /* Primary */
+      --clariti-orange: #FF4E08;
+      --clariti-black:  #1E1E1E;
+      --white:          #FFFFFF;
+
+      /* Secondary / Accent */
+      --dark-purple: #313A6B;
+      --rich-teal:   #124654;
+      --light-blue:  #CCE1F2;
+      --oat:         #F8F4E3;
+      --periwinkle:  #556CE8;
+      --french-blue: #1F6894;
+
+      /* UI */
+      --bg: var(--white);
+      --text: var(--clariti-black);
+      --muted: #4B4B4B;
+      --border: #E6E8ED;
+      --card: #FFFFFF;
       --radius: 16px;
       --radius-sm: 12px;
+      --shadow: 0 10px 30px rgba(17, 24, 39, .08);
+      --focus: 0 0 0 3px rgba(255,78,8,.25);
     }
-    @media (prefers-color-scheme: light){
+    @media (prefers-color-scheme: dark){
       :root{
-        --bg:#f7f9fc; --card:#ffffff; --muted:#5a6b85; --text:#0b1220; --border:#e6eaf2; --shadow: 0 8px 24px rgba(15,23,42,.08);
+        --bg: #0C0E1B;                 /* guide: dark bg option */
+        --card: #121722;
+        --text: #F7F9FC;
+        --muted: #A5A5A5;
+        --border: #1F2A3B;
+        --shadow: 0 10px 30px rgba(0,0,0,.35);
       }
     }
-    html,body{height:100%;}
+
+    /* Base */
+    html,body{height:100%}
     body{
-      margin:0; background: radial-gradient(1200px 600px at 10% -10%, rgba(110,231,255,.12), transparent 40%),
-      radial-gradient(1000px 500px at 120% 10%, rgba(155,140,255,.12), transparent 40%), var(--bg);
-      color:var(--text); font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      margin:0;
+      background: var(--bg);
+      color:var(--text);
+      font: 16px/1.6 "Public Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     }
-    .wrap{max-width:1100px; margin:0 auto; padding:24px;}
+    .wrap{max-width:1080px; margin:0 auto; padding:24px;}
 
     /* Header */
-    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:8px 0 24px;}
-    .brand{display:flex; align-items:center; gap:12px;}
-    .logo{width:36px; height:36px; border-radius:10px; background:
-      radial-gradient(60% 60% at 30% 30%, var(--brand), transparent 70%),
-      radial-gradient(60% 60% at 70% 70%, var(--brand-2), transparent 60%),
-      linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,0));
-      border:1px solid var(--border); box-shadow: var(--shadow);
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:6px 0 20px;}
+    .brand{display:flex; align-items:center; gap:14px;}
+    .brand img{width:160px; height:auto;}
+    .badge-pill{
+      font: 600 12px/1 "Libre Franklin", system-ui;
+      letter-spacing:.3px; padding:8px 10px; border-radius:999px; border:1px solid var(--border);
+      color:var(--rich-teal); background: #EBF3FA;
     }
-    .title{font-weight:700; letter-spacing:.2px;}
     .actions{display:flex; gap:10px; flex-wrap:wrap;}
-    .btn{appearance:none; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)); color:var(--text); padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; transition: transform .06s ease, background .2s ease, border-color .2s ease; box-shadow: var(--shadow);} 
-    .btn:hover{transform: translateY(-1px);} 
-    .btn.primary{background: linear-gradient(135deg, rgba(110,231,255,.2), rgba(155,140,255,.2)); border-color: rgba(110,231,255,.35);} 
+    .btn{
+      appearance:none; border:1px solid var(--border); background:#fff; color:var(--text);
+      padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; box-shadow: var(--shadow);
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .btn:focus-visible{outline:none; box-shadow: var(--focus)}
+    .btn.primary{
+      background: linear-gradient(180deg, #FFE6DC, #fff);
+      border-color: rgba(255,78,8,.45); color: var(--clariti-black);
+    }
 
     /* Hero */
-    .hero{display:grid; grid-template-columns: 1.2fr .8fr; gap:22px; align-items:stretch;}
-    @media (max-width: 900px){.hero{grid-template-columns:1fr;}}
-    .card{background:var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);} 
+    h1,h2,h3{font-family:"Libre Franklin", system-ui; margin:0 0 6px}
+    .lede{color:var(--muted); margin:0}
+    .hero{
+      display:grid; grid-template-columns: 1.25fr .75fr; gap:20px; align-items:stretch;
+      margin-bottom: 8px;
+    }
+    @media (max-width: 900px){ .hero{grid-template-columns:1fr;} }
+    .card{background:var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);}
     .card.pad{padding:22px;}
-    .hero h1{margin:.1rem 0 6px; font-size: clamp(26px, 4vw, 38px);}
-    .lede{color:var(--muted); margin: 0 0 16px;}
-    .badges{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0;}
-    .badge{font-size:12px; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:var(--muted); background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));}
-    .stat{display:flex; align-items:center; gap:12px; padding:14px 16px; border-top:1px solid var(--border);} 
-    .stat strong{font-size:20px;}
+    .hero .accent{
+      border-left: 6px solid var(--clariti-orange);
+      padding-left: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,78,8,.06), rgba(255,78,8,0));
+    }
 
-    /* Sections */
-    section{margin:28px 0;}
-    section h2{margin:0 0 12px; font-size: clamp(20px, 2.5vw, 24px);} 
-    .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:16px;}
-    .col-4{grid-column: span 4;} .col-6{grid-column: span 6;} .col-8{grid-column: span 8;} .col-12{grid-column: span 12;}
+    /* Sections / Layout */
+    section{margin:26px 0}
+    .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:16px}
+    .col-4{grid-column: span 4} .col-6{grid-column: span 6} .col-8{grid-column: span 8} .col-12{grid-column: span 12}
     @media (max-width: 900px){ .col-4,.col-6,.col-8{grid-column: span 12;} }
 
-    .kpi{display:flex; align-items:center; gap:12px;}
-    .kpi .dot{width:10px; height:10px; border-radius:999px; background: var(--ok);} 
+    /* Lists */
+    .list{display:grid; gap:10px; padding-left: 18px; margin: 8px 0 0}
+    .list li{margin-left: 8px}
 
-    .list{display:grid; gap:8px;}
-    .list li{list-style:none; padding:10px 12px; border:1px dashed var(--border); border-radius:12px;}
+    /* Do / Don’t */
+    .panel{border-left:6px solid transparent}
+    .panel.ok{border-left-color: #38D39F}
+    .panel.bad{border-left-color: #FF7A7A}
+    .panel h2{display:flex; align-items:center; gap:8px}
+    .panel h2 .dot{width:10px; height:10px; background:#38D39F; border-radius:999px}
+    .panel.bad h2 .dot{background:#FF7A7A}
 
-    /* Do / Don't */
-    .flex{display:flex; gap:16px; flex-wrap:wrap;}
-    .panel{flex:1 1 300px;}
-    .panel h3{margin-top:0}
-    .ok{border-left:4px solid var(--ok);} .warn{border-left:4px solid var(--warn);} .bad{border-left:4px solid var(--danger);} 
-
-    /* Details/Accordion */
-    details{border:1px solid var(--border); border-radius:12px; background:var(--card);}
-    details + details{margin-top:10px;}
-    summary{cursor:pointer; padding:14px 16px; font-weight:600; display:flex; align-items:center; gap:10px;}
-    summary::marker{display:none;}
-    .chev{transition: transform .2s ease;}
-    details[open] .chev{transform: rotate(90deg);} 
-    .details-body{padding:0 16px 16px; color:var(--muted);} 
+    /* Accordion */
+    details{border:1px solid var(--border); border-radius:12px; background:var(--card)}
+    details + details{margin-top:10px}
+    summary{cursor:pointer; padding:14px 16px; font-weight:700; display:flex; align-items:center; gap:10px}
+    summary::marker{display:none}
+    .chev{transition: transform .2s ease}
+    details[open] .chev{transform: rotate(90deg)}
+    .details-body{padding:0 16px 16px; color:var(--muted)}
 
     /* Prompt Builder */
-    .builder{display:grid; gap:12px;}
-    .field{display:grid; gap:6px;}
-    label{font-weight:600;}
-    input[type="text"], select, textarea{background:transparent; color:var(--text); border:1px solid var(--border); border-radius:12px; padding:10px 12px; outline:none;}
-    textarea{min-height:110px; resize:vertical;}
+    .builder{display:grid; gap:12px}
+    .field{display:grid; gap:6px}
+    label{font-weight:600}
+    input[type="text"], select, textarea{
+      background:transparent; color:var(--text); border:1px solid var(--border);
+      border-radius:12px; padding:10px 12px; outline:none;
+    }
+    input:focus-visible, select:focus-visible, textarea:focus-visible{box-shadow: var(--focus)}
+    textarea{min-height:120px; resize:vertical}
 
-    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
 
-    .toast{position:fixed; inset:auto auto 24px 50%; transform: translateX(-50%) translateY(20px); background:var(--card); border:1px solid var(--border); padding:10px 14px; border-radius:12px; opacity:0; pointer-events:none; transition:.25s ease; box-shadow: var(--shadow);} 
-    .toast.show{opacity:1; transform: translateX(-50%) translateY(0);} 
+    /* Helpers */
+    .pill{
+      display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700;
+      color:#fff; background: var(--clariti-orange); letter-spacing:.3px; font-size:12px;
+    }
+    .note{color:var(--muted); font-size:14px}
 
-    .footer{display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--muted); padding:16px 0 40px;}
-    .ver{font-variant-numeric:tabular-nums;}
+    /* Toast */
+    .toast{position:fixed; inset:auto auto 24px 50%; transform: translateX(-50%) translateY(20px);
+      background:var(--card); border:1px solid var(--border); padding:10px 14px; border-radius:12px; opacity:0;
+      pointer-events:none; transition:.25s ease; box-shadow: var(--shadow); color:var(--text)}
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(0)}
+
+    /* Footer */
+    .footer{display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--muted); padding:16px 0 40px}
+    .ver{font-variant-numeric:tabular-nums}
 
     /* Print */
     @media print{
-      .btn, .actions, .toast{display:none !important;}
-      body{background:#fff;}
-      .card{box-shadow:none;}
+      .actions,.toast,.toolbar .btn{display:none !important}
+      body{background:#fff}
+      .card{box-shadow:none}
     }
   </style>
 </head>
@@ -117,11 +167,9 @@
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div class="title">Clariti · AI Squad</div>
-          <div class="lede">Internal guide — Getting Started with ChatGPT</div>
-        </div>
+        <!-- Replace the src path to wherever you place the logo in your repo -->
+        <img src="assets/clariti-logo-hero.png" alt="Clariti logo" />
+        <span class="badge-pill">Internal · AI Squad</span>
       </div>
       <div class="actions">
         <button class="btn" id="printBtn" title="Print or Save as PDF">🖨️ Print / PDF</button>
@@ -131,33 +179,31 @@
 
     <!-- Hero -->
     <div class="hero">
-      <div class="card pad">
-        <h1>Work smarter with ChatGPT</h1>
+      <div class="card pad accent">
+        <h1 style="font-weight:800">Getting Started with ChatGPT at Clariti</h1>
         <p class="lede">Empowerment, not replacement. Use AI to reduce busywork, improve clarity, and make room for higher‑value work.</p>
-        <div class="badges">
-          <span class="badge">Human‑in‑the‑loop ✅</span>
-          <span class="badge">Transparent usage 💬</span>
-          <span class="badge">Security‑aware 🔒</span>
-        </div>
-        <div class="stat" role="group" aria-label="Key principles">
-          <div class="kpi"><span class="dot"></span><span>Always review & own the output</span></div>
+        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
+          <span class="pill" title="Principle">Human‑in‑the‑loop</span>
+          <span class="pill" title="Principle" style="background:var(--rich-teal)">Transparency</span>
+          <span class="pill" title="Principle" style="background:var(--dark-purple)">Security‑aware</span>
         </div>
       </div>
+
       <div class="card pad">
         <h2 style="margin-top:0">Quick start</h2>
         <ol class="list" aria-label="Quick start steps">
-          <li>Sign in with the Clariti ChatGPT Teams license (rollout details incoming).</li>
+          <li>Sign in with Clariti’s ChatGPT Teams license (rollout details incoming).</li>
           <li>Pick one task today to try in ChatGPT (email draft, summary, checklist).</li>
           <li>Share your learning with your team — we’re building skills together.</li>
         </ol>
-        <div class="toolbar" style="margin-top:10px">
+        <div class="toolbar" style="margin-top:12px">
           <button class="btn" id="markTriedBtn" aria-pressed="false">☑️ I tried one task</button>
-          <small id="triedNote" class="lede" aria-live="polite"></small>
+          <small id="triedNote" class="note" aria-live="polite"></small>
         </div>
       </div>
     </div>
 
-    <!-- Use Cases & Principles -->
+    <!-- Use Cases + Principles -->
     <section>
       <div class="grid">
         <div class="col-8">
@@ -167,7 +213,7 @@
               <summary><span class="chev">▶</span> Content & Communication</summary>
               <div class="details-body">
                 <ul>
-                  <li>Draft email outlines, meeting recaps, release notes</li>
+                  <li>Draft email outlines, meeting recaps, and release notes</li>
                   <li>Rewrite for tone (friendly, formal, concise)</li>
                   <li>Summarize long docs into bullet points</li>
                 </ul>
@@ -177,7 +223,7 @@
               <summary><span class="chev">▶</span> Data, Organization & Ops</summary>
               <div class="details-body">
                 <ul>
-                  <li>Create checklists, SOPs, templates and FAQs</li>
+                  <li>Create checklists, SOPs, templates, and FAQs</li>
                   <li>Extract key fields from raw text</li>
                   <li>Draft Jira tickets, test scripts, or acceptance criteria</li>
                 </ul>
@@ -195,13 +241,14 @@
             </details>
           </div>
         </div>
+
         <div class="col-4">
-          <div class="card pad">
+          <div class="card pad" style="background: var(--oat)">
             <h2>Principles</h2>
             <ul>
               <li><strong>Human‑in‑the‑loop:</strong> You own the work; always review outputs.</li>
-              <li><strong>Transparency:</strong> Calling out that you used ChatGPT is encouraged.</li>
-              <li><strong>Experimentation:</strong> Start small, iterate, share what you learn.</li>
+              <li><strong>Transparency:</strong> Calling out ChatGPT usage is encouraged.</li>
+              <li><strong>Experimentation:</strong> Start small, iterate, and share wins.</li>
             </ul>
           </div>
         </div>
@@ -213,9 +260,9 @@
       <div class="grid">
         <div class="col-6">
           <div class="card pad panel ok">
-            <h2>Do ✅</h2>
+            <h2><span class="dot" aria-hidden="true"></span> Do</h2>
             <ul>
-              <li>Use it for drafting, summarizing, formatting, and outlining</li>
+              <li>Use for drafting, summarizing, formatting, and outlining</li>
               <li>Iterate on prompts; save ones that work</li>
               <li>Share wins with your team</li>
             </ul>
@@ -223,7 +270,7 @@
         </div>
         <div class="col-6">
           <div class="card pad panel bad">
-            <h2>Don’t ⛔</h2>
+            <h2><span class="dot" aria-hidden="true"></span> Don’t</h2>
             <ul>
               <li>Paste confidential customer or personal data</li>
               <li>Assume outputs are correct without review</li>
@@ -238,7 +285,7 @@
     <section>
       <div class="card pad">
         <h2>Prompt builder</h2>
-        <p class="lede">Assemble a great prompt and copy it with one click. Think role, goal, audience, tone, and constraints.</p>
+        <p class="note">Assemble a great prompt and copy it with one click. Think role, goal, audience, tone, and constraints.</p>
         <div class="builder">
           <div class="grid">
             <div class="col-4 field">
@@ -293,23 +340,19 @@
 
     <!-- Resources -->
     <section>
-      <div class="grid">
-        <div class="col-12">
-          <div class="card pad">
-            <h2>Resources</h2>
-            <ul>
-              <li>AI Squad updates in Metronome — weekly L10 notes & to‑dos</li>
-              <li>Security awareness module (KnowBe4) — coming soon</li>
-              <li>Clariti‑specific use cases & training — in development</li>
-            </ul>
-          </div>
-        </div>
+      <div class="card pad" style="border-left:6px solid var(--periwinkle)">
+        <h2>Resources</h2>
+        <ul>
+          <li>AI Squad updates in Metronome — weekly L10 notes & to‑dos</li>
+          <li>Security awareness module (KnowBe4) — coming soon</li>
+          <li>Clariti‑specific use cases & training — in development</li>
+        </ul>
       </div>
     </section>
 
     <div class="footer">
       <div>© Clariti · Internal Use Only</div>
-      <div class="ver">v1.0 · Updated Aug 2025</div>
+      <div class="ver">v1.1 · Updated Aug 2025</div>
     </div>
   </div>
 
